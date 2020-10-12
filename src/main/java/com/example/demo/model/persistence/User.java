@@ -33,7 +33,8 @@ public class User {
 	@JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
 	private String password;
 
-	@Column(nullable = false)
+	@Column
+//			(nullable = false)
 	private String salt;
 
 	public String getSalt() {

@@ -49,11 +49,13 @@ public class UserController {
 	public ResponseEntity<User> createUser(@RequestBody CreateUserRequest createUserRequest) {
 		User user = new User();
 		user.setUsername(createUserRequest.getUsername());
-		SecureRandom random = new SecureRandom();
-		byte[] salt = new byte[16];
-		random.nextBytes(salt);
-		String encodedSalt = Base64.getEncoder().encodeToString(salt);
-		user.setSalt(encodedSalt);
+
+//		SecureRandom random = new SecureRandom();
+//		byte[] salt = new byte[16];
+//		random.nextBytes(salt);
+//		String encodedSalt = Base64.getEncoder().encodeToString(salt);
+//		user.setSalt(encodedSalt);
+
 		Cart cart = new Cart();
 		cartRepository.save(cart);
 		user.setCart(cart);
@@ -64,7 +66,9 @@ public class UserController {
 			return ResponseEntity.badRequest().build();
 		}
 		user.setPassword(bCryptPasswordEncoder
-				.encode(createUserRequest.getPassword() + user.getSalt()));
+				.encode(createUserRequest.getPassword() 
+//						+ user.getSalt()
+				));
 		System.out.println(user.toString());
 		userRepository.save(user);
 		return ResponseEntity.ok(user);
