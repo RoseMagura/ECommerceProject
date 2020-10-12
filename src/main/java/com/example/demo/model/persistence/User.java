@@ -13,6 +13,8 @@ import javax.persistence.Table;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import java.security.SecureRandom;
+
 
 @Entity
 @Table(name = "user")
@@ -26,14 +28,49 @@ public class User {
 	@Column(nullable = false, unique = true)
 	@JsonProperty
 	private String username;
-	
+
+	@Column(nullable = false)
+	@JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+	private String password;
+
+	@Column(nullable = false)
+	private String salt;
+
+	public String getSalt() {
+		return salt;
+	}
+
+	public void setSalt(String salt) {
+		this.salt = salt;
+	}
+
 	@OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "cart_id", referencedColumnName = "id")
 	@JsonIgnore
     private Cart cart;
-	
+
+	public User(){}
+	public User(String username, String password) {
+		this.username = username;
+		this.password = password;
+	}
+	public User(String username, String password, Cart cart, String salt) {
+		this.username = username;
+		this.password = password;
+		this.cart = cart;
+		this.salt = salt;
+	}
+
 	public Cart getCart() {
 		return cart;
+	}
+
+	public String getPassword() {
+		return password;
+	}
+
+	public void setPassword(String password) {
+		this.password = password;
 	}
 
 	public void setCart(Cart cart) {
@@ -55,7 +92,14 @@ public class User {
 	public void setUsername(String username) {
 		this.username = username;
 	}
-	
-	
-	
+
+	@Override
+	public String toString() {
+		return "User{" +
+				"id=" + id +
+				", username='" + username + '\'' +
+				", password='" + password + '\'' +
+				", cart=" + cart +
+				'}';
+	}
 }
