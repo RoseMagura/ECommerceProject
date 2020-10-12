@@ -21,3 +21,5 @@ public class SareetaApplication {
 		return new BCryptPasswordEncoder();
 	}
 }
+
+
