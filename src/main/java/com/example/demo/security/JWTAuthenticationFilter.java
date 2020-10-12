@@ -20,42 +20,42 @@ import java.util.Date;
 import static com.auth0.jwt.algorithms.Algorithm.HMAC512;
 import static com.example.demo.security.SecurityConstants.*;
 
-
 public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
-        private AuthenticationManager authenticationManager;
 
-        public JWTAuthenticationFilter(AuthenticationManager authenticationManager) {
-            this.authenticationManager = authenticationManager;
-        }
+    private AuthenticationManager authenticationManager;
 
-        @Override
-        public Authentication attemptAuthentication(HttpServletRequest req,
-                                                    HttpServletResponse res) throws AuthenticationException {
-            try {
-                User creds = new ObjectMapper()
-                        .readValue(req.getInputStream(), User.class);
+    public JWTAuthenticationFilter(AuthenticationManager authenticationManager) {
+        this.authenticationManager = authenticationManager;
+    }
 
-                return authenticationManager.authenticate(
-                        new UsernamePasswordAuthenticationToken(
-                                creds.getUsername(),
-                                creds.getPassword(),
-                                new ArrayList<>())
-                );
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
-        }
+    @Override
+    public Authentication attemptAuthentication(HttpServletRequest req,
+                                                HttpServletResponse res) throws AuthenticationException {
+        try {
+            User creds = new ObjectMapper()
+                    .readValue(req.getInputStream(), User.class);
 
-        @Override
-        protected void successfulAuthentication(HttpServletRequest req,
-                                                HttpServletResponse res,
-                                                FilterChain chain,
-                                                Authentication auth) throws IOException, ServletException {
-
-            String token = JWT.create()
-                    .withSubject(((User) auth.getPrincipal()).getUsername())
-                    .withExpiresAt(new Date(System.currentTimeMillis() + EXPIRATION_TIME))
-                    .sign(HMAC512(SECRET.getBytes()));
-            res.addHeader(HEADER_STRING, TOKEN_PREFIX + token);
+            return authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(
+                            creds.getUsername(),
+                            creds.getPassword(),
+                            new ArrayList<>())
+            );
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
     }
+
+    @Override
+    protected void successfulAuthentication(HttpServletRequest req,
+                                            HttpServletResponse res,
+                                            FilterChain chain,
+                                            Authentication auth) throws IOException, ServletException {
+
+        String token = JWT.create()
+                .withSubject(((User) auth.getPrincipal()).getUsername())
+                .withExpiresAt(new Date(System.currentTimeMillis() + EXPIRATION_TIME))
+                .sign(HMAC512(SECRET.getBytes()));
+        res.addHeader(HEADER_STRING, TOKEN_PREFIX + token);
+    }
+}

@@ -8,10 +8,14 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Collections;
 
 import static java.util.Collections.emptyList;
 
 @Service
+@Transactional
 public class UserDetailsServiceImpl implements UserDetailsService {
     private UserRepository userRepository;
 
@@ -25,6 +29,6 @@ public class UserDetailsServiceImpl implements UserDetailsService {
         if (user == null) {
             throw new UsernameNotFoundException(username);
         }
-        return (UserDetails) new User(user.getUsername(), user.getPassword() );
+        return new org.springframework.security.core.userdetails.User(user.getUsername(), user.getPassword(), Collections.emptyList());
     }
 }
