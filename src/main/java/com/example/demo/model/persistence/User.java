@@ -13,8 +13,6 @@ import javax.persistence.Table;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import java.security.SecureRandom;
-
 
 @Entity
 @Table(name = "user")
@@ -35,13 +33,13 @@ public class User {
 
 	@Column
 //			(nullable = false)
-	private String salt;
+	private byte[] salt;
 
-	public String getSalt() {
+	public byte[] getSalt() {
 		return salt;
 	}
 
-	public void setSalt(String salt) {
+	public void setSalt(byte[] salt) {
 		this.salt = salt;
 	}
 
@@ -55,7 +53,7 @@ public class User {
 		this.username = username;
 		this.password = password;
 	}
-	public User(String username, String password, Cart cart, String salt) {
+	public User(String username, String password, Cart cart, byte[] salt) {
 		this.username = username;
 		this.password = password;
 		this.cart = cart;

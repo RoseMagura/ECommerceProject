@@ -1,9 +1,12 @@
 package com.example.demo.controllers;
 
+import java.security.MessageDigest;
 import java.security.SecureRandom;
 import java.util.Base64;
 import java.util.Optional;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -34,6 +37,7 @@ public class UserController {
 	@Autowired
 	private BCryptPasswordEncoder bCryptPasswordEncoder;
 
+	public static final Logger log = LogManager.getLogger(UserController.class);
 	@GetMapping("/id/{id}")
 	public ResponseEntity<User> findById(@PathVariable Long id) {
 		return ResponseEntity.of(userRepository.findById(id));
@@ -49,27 +53,27 @@ public class UserController {
 	public ResponseEntity<User> createUser(@RequestBody CreateUserRequest createUserRequest) {
 		User user = new User();
 		user.setUsername(createUserRequest.getUsername());
+		log.info("Username set with", createUserRequest.getUsername());
 
-//		SecureRandom random = new SecureRandom();
-//		byte[] salt = new byte[16];
-//		random.nextBytes(salt);
-//		String encodedSalt = Base64.getEncoder().encodeToString(salt);
-//		user.setSalt(encodedSalt);
+		SecureRandom random = new SecureRandom();
+		byte[] salt = new byte[16];
+		random.nextBytes(salt);
+		user.setSalt(salt);
+		log.info("Salt stored with user: ", user.getSalt());
 
 		Cart cart = new Cart();
 		cartRepository.save(cart);
 		user.setCart(cart);
 		if(createUserRequest.getPassword().length() < 7 ||
 				!createUserRequest.getPassword().equals(createUserRequest.getConfirmPassword())){
-//			log.error
-			System.out.println("Error with user password. Cannot create user {}" + createUserRequest.getUsername());
+			log.error("Error with user password. Cannot create user {}", createUserRequest.getUsername());
 			return ResponseEntity.badRequest().build();
 		}
 		user.setPassword(bCryptPasswordEncoder
-				.encode(createUserRequest.getPassword() 
+				.encode(createUserRequest.getPassword()
 //						+ user.getSalt()
 				));
-		System.out.println(user.toString());
+		log.debug("Is User being created correctly?", user.toString());
 		userRepository.save(user);
 		return ResponseEntity.ok(user);
 	}
