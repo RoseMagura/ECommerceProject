@@ -49,10 +49,6 @@ public class User {
     private Cart cart;
 
 	public User(){}
-	public User(String username, String password) {
-		this.username = username;
-		this.password = password;
-	}
 	public User(String username, String password, Cart cart, byte[] salt) {
 		this.username = username;
 		this.password = password;
@@ -98,6 +94,7 @@ public class User {
 				"id=" + id +
 				", username='" + username + '\'' +
 				", password='" + password + '\'' +
+				", salt='" + salt + '\'' +
 				", cart=" + cart +
 				'}';
 	}
