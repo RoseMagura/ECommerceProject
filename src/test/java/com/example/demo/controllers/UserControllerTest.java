@@ -34,14 +34,16 @@ public class UserControllerTest {
     }
 
     @Test
-    public void create_user_happy_path() throws Exception{
-        when(encoder.encode("testPassword")).thenReturn("thisIsHashed");
+    public void testSuccessfulUserCreation() throws Exception{
+//        when(encoder.encode("testPassword")).thenReturn("thisIsHashed");
         CreateUserRequest r = new CreateUserRequest();
         r.setUsername("test");
         r.setPassword("testPassword");
         r.setConfirmPassword("testPassword");
 
         final ResponseEntity<User> response = userController.createUser(r);
+        System.out.println("salt? " + response.getBody().getSalt());
+        when(encoder.encode("testPassword" )).thenReturn("thisIsHashed");
 
         assertNotNull(response);
         assertEquals(200, response.getStatusCodeValue());
@@ -53,4 +55,29 @@ public class UserControllerTest {
         assertEquals("thisIsHashed", u.getPassword());
     }
 
+    @Test
+    public void testCreatePasswordMismatchError() throws Exception{
+        CreateUserRequest r = new CreateUserRequest();
+        r.setUsername("test");
+        r.setPassword("testPassword");
+        r.setConfirmPassword("testPssword");
+
+        final ResponseEntity<User> response = userController.createUser(r);
+
+        assertNotNull(response);
+        assertEquals(400, response.getStatusCodeValue());
+    }
+
+    @Test
+    public void testCreatePasswordLengthError() throws Exception{
+        CreateUserRequest r = new CreateUserRequest();
+        r.setUsername("user");
+        r.setPassword("test");
+        r.setConfirmPassword("test");
+
+        final ResponseEntity<User> response = userController.createUser(r);
+
+        assertNotNull(response);
+        assertEquals(400, response.getStatusCodeValue());
+    }
 }
