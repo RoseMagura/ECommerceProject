@@ -19,30 +19,27 @@ public class UserControllerTest {
 
     private UserController userController;
 
-    private UserRepository userRepo = mock(UserRepository.class);
+    private final UserRepository userRepo = mock(UserRepository.class);
 
-    private CartRepository cartRepo = mock(CartRepository.class);
+    private final CartRepository cartRepo = mock(CartRepository.class);
 
-    private BCryptPasswordEncoder encoder = mock(BCryptPasswordEncoder.class);
+    private final BCryptPasswordEncoder encoder = mock(BCryptPasswordEncoder.class);
     @Before
     public void setUp() {
         userController = new UserController();
         TestUtils.injectObjects(userController, "userRepository", userRepo);
         TestUtils.injectObjects(userController, "cartRepository", cartRepo);
         TestUtils.injectObjects(userController, "bCryptPasswordEncoder", encoder);
-
     }
 
     @Test
     public void testSuccessfulUserCreation() throws Exception{
-//        when(encoder.encode("testPassword")).thenReturn("thisIsHashed");
+        when(encoder.encode("testPasswordtset")).thenReturn("thisIsHashed");
         CreateUserRequest r = new CreateUserRequest();
         r.setUsername("test");
         r.setPassword("testPassword");
         r.setConfirmPassword("testPassword");
-
         final ResponseEntity<User> response = userController.createUser(r);
-        when(encoder.encode("testPassword" )).thenReturn("thisIsHashed");
 
         assertNotNull(response);
         assertEquals(200, response.getStatusCodeValue());

@@ -1,5 +1,6 @@
 package com.example.demo.controllers;
 
+import com.example.demo.SareetaApplication;
 import com.example.demo.TestUtils;
 import com.example.demo.model.persistence.Item;
 import com.example.demo.model.persistence.repositories.CartRepository;
@@ -9,33 +10,37 @@ import org.apache.coyote.Response;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
+@Transactional
+@SpringBootTest(classes = SareetaApplication.class)
 public class ItemControllerTest {
+
     private ItemController itemController;
 
-    private ItemRepository itemRepo = mock(ItemRepository.class);
+    private final ItemRepository itemRepo = mock(ItemRepository.class);
 
     @Before
     public void setUp() {
         itemController = new ItemController();
         TestUtils.injectObjects(itemController, "itemRepository", itemRepo);
-//        TestUtils.injectObjects(userController, "cartRepository", cartRepo);
-//        TestUtils.injectObjects(userController, "bCryptPasswordEncoder", encoder);
     }
 
-    @BeforeClass
-    public void addItems() {
-        itemRepo.save(new Item("Round Widget", 2.99, "A widget that is round"));
-        itemRepo.save(new Item("Square Widget", 1.99, "A widget that is square"));
-    }
 
     @Test
     public void getAllItemsSuccessful(){
@@ -46,18 +51,44 @@ public class ItemControllerTest {
 
     @Test
     public void getItemByIdSuccessful(){
-        System.out.println(itemRepo.findAll());
-        ResponseEntity<Item> item = itemController.getItemById(0L);
+        when(itemRepo.findById(1L)).thenReturn(
+                java.util.Optional.of(new Item("Round Widget", 2.99, "A widget that is round")));
+        ResponseEntity<Item> item = itemController.getItemById(1L);
         assertNotNull(item);
         assertEquals(200, item.getStatusCodeValue());
-        System.out.println(item.getBody());
+        assertEquals("Round Widget", Objects.requireNonNull(item.getBody()).getName());
+        assertEquals(BigDecimal.valueOf(2.99), item.getBody().getPrice());
+        assertEquals("A widget that is round", item.getBody().getDescription());
     }
 
-    public void getItemByIdError(){}
+    public void getItemByIdError(){
+        when(itemRepo.findById(1L)).thenReturn(
+                java.util.Optional.of(new Item("Round Widget", 2.99, "A widget that is round")));
+        ResponseEntity<Item> item = itemController.getItemById(100L);
+        assertNotNull(item);
+        assertEquals(404, item.getStatusCodeValue());
+    }
 
-    public void getItemByNameSuccessful(){}
+    @Test
+    public void getItemByNameSuccessful(){
+        List<Item> items = Collections.singletonList(new Item("Round Widget", 2.99, "A widget that is round"));
+        when(itemRepo.findByName("Round Widget")).thenReturn(items);
+        ResponseEntity<List<Item>> item = itemController.getItemsByName("Round Widget");
+        assertNotNull(item);
+        assertEquals(200, item.getStatusCodeValue());
+        assertEquals("Round Widget", Objects.requireNonNull(item.getBody()).get(0).getName());
+        assertEquals(BigDecimal.valueOf(2.99), item.getBody().get(0).getPrice());
+        assertEquals("A widget that is round", item.getBody().get(0).getDescription());
+    }
 
-    public void getItemByNameError(){}
+    @Test
+    public void getItemByNameError(){
+        List<Item> items = Collections.singletonList(new Item("Round Widget", 2.99, "round"));
+        when(itemRepo.findByName("Round Widget")).thenReturn(items);
+        ResponseEntity<List<Item>> item = itemController.getItemsByName("Round Wdget");
+        assertNotNull(item);
+        assertEquals(404, item.getStatusCodeValue());
+    }
 
 
 

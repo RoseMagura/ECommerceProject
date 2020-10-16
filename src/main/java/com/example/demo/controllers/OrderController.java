@@ -20,8 +20,7 @@ import com.example.demo.model.persistence.repositories.UserRepository;
 @RestController
 @RequestMapping("/api/order")
 public class OrderController {
-	
-	
+
 	@Autowired
 	private UserRepository userRepository;
 	

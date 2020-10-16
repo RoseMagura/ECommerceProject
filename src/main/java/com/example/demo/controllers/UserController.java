@@ -66,7 +66,8 @@ public class UserController {
 		}
 		user.setPassword(bCryptPasswordEncoder
 				.encode(createUserRequest.getPassword()
-						+ new StringBuffer(createUserRequest.getUsername().toLowerCase()).reverse().toString()));
+						+ new StringBuffer(createUserRequest.getUsername().toLowerCase()).reverse().toString()
+				));
 //		log.debug("Is User being created correctly?", user.toString());
 		log.info(user.toString());
 		userRepository.save(user);
