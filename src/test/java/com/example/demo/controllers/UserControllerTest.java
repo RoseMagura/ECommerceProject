@@ -42,7 +42,6 @@ public class UserControllerTest {
         r.setConfirmPassword("testPassword");
 
         final ResponseEntity<User> response = userController.createUser(r);
-        System.out.println("salt? " + response.getBody().getSalt());
         when(encoder.encode("testPassword" )).thenReturn("thisIsHashed");
 
         assertNotNull(response);

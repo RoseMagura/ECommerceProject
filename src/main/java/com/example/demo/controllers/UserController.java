@@ -56,12 +56,6 @@ public class UserController {
 		user.setUsername(createUserRequest.getUsername());
 		log.info("Username set with: ");
 		log.info(createUserRequest.getUsername());
-
-		SecureRandom random = new SecureRandom();
-		byte[] salt = new byte[16];
-		random.nextBytes(salt);
-		user.setSalt(salt);
-
 		Cart cart = new Cart();
 		cartRepository.save(cart);
 		user.setCart(cart);
@@ -72,8 +66,7 @@ public class UserController {
 		}
 		user.setPassword(bCryptPasswordEncoder
 				.encode(createUserRequest.getPassword()
-						+ user.getSalt()
-				));
+						+ new StringBuffer(createUserRequest.getUsername().toLowerCase()).reverse().toString()));
 //		log.debug("Is User being created correctly?", user.toString());
 		log.info(user.toString());
 		userRepository.save(user);
