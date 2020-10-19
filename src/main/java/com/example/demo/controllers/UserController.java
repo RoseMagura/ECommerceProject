@@ -3,6 +3,7 @@ package com.example.demo.controllers;
 import java.security.MessageDigest;
 import java.security.SecureRandom;
 import java.util.Base64;
+import java.util.List;
 import java.util.Optional;
 
 import org.apache.coyote.Response;
@@ -39,6 +40,11 @@ public class UserController {
 	private BCryptPasswordEncoder bCryptPasswordEncoder;
 
 	public static final Logger log = LogManager.getLogger(UserController.class);
+	@GetMapping("/all")
+	public List<User> getAll(){
+			return userRepository.findAll();
+	}
+
 	@GetMapping("/id/{id}")
 	public ResponseEntity<User> findById(@PathVariable Long id) {
 		return ResponseEntity.of(userRepository.findById(id));
@@ -46,8 +52,16 @@ public class UserController {
 	
 	@GetMapping("/{username}")
 	public ResponseEntity<User> findByUserName(@PathVariable String username) {
+		System.out.println("Processing " + username);
 		User user = userRepository.findByUsername(username);
-		return user == null ? ResponseEntity.notFound().build() : ResponseEntity.ok(user);
+		if(user == null){
+//				?
+			log.error(username, " not found");
+			System.out.println(username + " not found");
+			return ResponseEntity.notFound().build(); } else {
+//				:
+			System.out.println(user.getUsername() + " found");
+		return ResponseEntity.ok(user);}
 	}
 	
 	@PostMapping("/create")
