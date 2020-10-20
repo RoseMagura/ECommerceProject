@@ -41,8 +41,12 @@ public class UserController {
 
 	public static final Logger log = LogManager.getLogger(UserController.class);
 	@GetMapping("/all")
-	public List<User> getAll(){
-			return userRepository.findAll();
+	public
+//	List<User>
+			String
+	getAll(){
+		return "all users";
+//			return userRepository.findAll();
 	}
 
 	@GetMapping("/id/{id}")
