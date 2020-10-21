@@ -43,6 +43,7 @@ public class UserController {
 
 	@GetMapping("/id/{id}")
 	public ResponseEntity<User> findById(@PathVariable Long id) {
+		//to see which user is being fetched
 		log.info("Fetching user: {}", userRepository.findById(id));
 		return ResponseEntity.of(userRepository.findById(id));
 	}
