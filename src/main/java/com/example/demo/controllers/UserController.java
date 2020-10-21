@@ -40,14 +40,6 @@ public class UserController {
 	private BCryptPasswordEncoder bCryptPasswordEncoder;
 
 	public static final Logger log = LogManager.getLogger(UserController.class);
-	@GetMapping("/all")
-	public
-//	List<User>
-			String
-	getAll(){
-		return "all users";
-//			return userRepository.findAll();
-	}
 
 	@GetMapping("/id/{id}")
 	public ResponseEntity<User> findById(@PathVariable Long id) {
@@ -56,7 +48,7 @@ public class UserController {
 	
 	@GetMapping("/{username}")
 	public ResponseEntity<User> findByUserName(@PathVariable String username) {
-		System.out.println("Processing " + username);
+		log.debug("Processing {}", username);
 		User user = userRepository.findByUsername(username);
 		if(user == null){
 //				?
@@ -72,8 +64,8 @@ public class UserController {
 	public ResponseEntity<User> createUser(@RequestBody CreateUserRequest createUserRequest) {
 		User user = new User();
 		user.setUsername(createUserRequest.getUsername());
-		log.info("Username set with: ");
-		log.info(createUserRequest.getUsername());
+		log.debug("Username set with: {} ", createUserRequest.getUsername());
+//		log.info(createUserRequest.getUsername());
 		Cart cart = new Cart();
 		cartRepository.save(cart);
 		user.setCart(cart);
