@@ -31,7 +31,7 @@ public class CartController {
 	@Autowired
 	private ItemRepository itemRepository;
 
-	public static final Logger log = LogManager.getLogger(UserController.class);
+	public static final Logger log = LogManager.getLogger(CartController.class);
 
 	@GetMapping("/details")
 	public ResponseEntity<Cart> getDetails(@RequestParam String username) {

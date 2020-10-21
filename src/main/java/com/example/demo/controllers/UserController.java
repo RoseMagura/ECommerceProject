@@ -43,6 +43,7 @@ public class UserController {
 
 	@GetMapping("/id/{id}")
 	public ResponseEntity<User> findById(@PathVariable Long id) {
+		log.info("Fetching user: {}", userRepository.findById(id));
 		return ResponseEntity.of(userRepository.findById(id));
 	}
 	
@@ -51,13 +52,13 @@ public class UserController {
 		log.debug("Processing {}", username);
 		User user = userRepository.findByUsername(username);
 		if(user == null){
-//				?
 			log.error(username, " not found");
-			System.out.println(username + " not found");
-			return ResponseEntity.notFound().build(); } else {
-//				:
-			System.out.println(user.getUsername() + " found");
-		return ResponseEntity.ok(user);}
+			return ResponseEntity.notFound().build();
+		}
+		else {
+			log.info(user.getUsername() + " found");
+			return ResponseEntity.ok(user);
+		}
 	}
 	
 	@PostMapping("/create")
@@ -65,21 +66,23 @@ public class UserController {
 		User user = new User();
 		user.setUsername(createUserRequest.getUsername());
 		log.debug("Username set with: {} ", createUserRequest.getUsername());
-//		log.info(createUserRequest.getUsername());
 		Cart cart = new Cart();
 		cartRepository.save(cart);
 		user.setCart(cart);
-		if(createUserRequest.getPassword().length() < 7 ||
-				!createUserRequest.getPassword().equals(createUserRequest.getConfirmPassword())){
-			log.error("Error with user password. Cannot create user {}", createUserRequest.getUsername());
+		if(createUserRequest.getPassword().length() < 7) {
+			log.error("Error with user password: too short. Password must be at least 7 characters" +
+					" Cannot create user {}", createUserRequest.getUsername());
+			return ResponseEntity.badRequest().build();
+		}
+		else if(!createUserRequest.getPassword().equals(createUserRequest.getConfirmPassword())){
+			log.error("Error with user password: passwords do not match. Cannot create user {}", createUserRequest.getUsername());
 			return ResponseEntity.badRequest().build();
 		}
 		user.setPassword(bCryptPasswordEncoder
 				.encode(createUserRequest.getPassword()
 						+ new StringBuffer(createUserRequest.getUsername().toLowerCase()).reverse().toString()
 				));
-//		log.debug("Is User being created correctly?", user.toString());
-		log.info(user.toString());
+		log.debug("Is User being created correctly? {}", user.toString());
 		userRepository.save(user);
 		return ResponseEntity.ok(user);
 	}
