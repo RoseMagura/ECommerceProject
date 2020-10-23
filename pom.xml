@@ -18,7 +18,22 @@
 		<java.version>1.8</java.version>
     	<maven-jar-plugin.version>3.1.1</maven-jar-plugin.version>
 	</properties>
-
+<!--	<repositories>-->
+<!--		 <repository>-->
+<!--&lt;!&ndash;		<id>splunk-artifactory</id>&ndash;&gt;-->
+<!--&lt;!&ndash;		<name>Splunk Releases</name>&ndash;&gt;-->
+<!--&lt;!&ndash;		<url>https://splunk.jfrog.io/splunk/ext-releases-local</url>&ndash;&gt;-->
+<!--						<id>splunk</id>-->
+<!--						<name>Splunk Artifactory</name>-->
+<!--						<url>http://splunk.artifactoryonline.com/artifactory/ext-releases-local/</url>-->
+<!--						<releases>-->
+<!--							<enabled>true</enabled>-->
+<!--						</releases>-->
+<!--						<snapshots>-->
+<!--							<enabled>false</enabled>-->
+<!--						</snapshots>-->
+<!--		  </repository>-->
+<!--	</repositories>-->
 	<dependencies>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
@@ -81,6 +96,11 @@
 			<artifactId>maven-surefire-plugin</artifactId>
 			<version>2.22.2</version>
 		</dependency>
+<!--		<dependency>-->
+<!--			<groupId>com.splunk.logging</groupId>-->
+<!--			<artifactId>splunk-library-javalogging</artifactId>-->
+<!--			<version>1.8.0</version>-->
+<!--		</dependency>-->
 
 	</dependencies>
 
