@@ -38,7 +38,7 @@ public class ItemController {
 		List<Item> items = itemRepository.findByName(name);
 		if(items == null || items.isEmpty())
 		{
-				 log.error("No items in cart");
+				 log.error("Item {} not found", name);
 		}
 		return items == null || items.isEmpty() ? ResponseEntity.notFound().build()
 				: ResponseEntity.ok(items);

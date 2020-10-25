@@ -37,7 +37,7 @@ public class CartController {
 	public ResponseEntity<Cart> getDetails(@RequestParam String username) {
 		User user = userRepository.findByUsername(username);
 		if(user == null) {
-			log.error(username, " not found");
+			log.error( "Could  not find user {}", username);
 			return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
 		}
 		Cart cart = cartRepository.findByUser(user);
@@ -48,11 +48,12 @@ public class CartController {
 	public ResponseEntity<Cart> addTocart(@RequestBody ModifyCartRequest request) {
 		User user = userRepository.findByUsername(request.getUsername());
 		if(user == null) {
-			log.error(request.getUsername(), " not found");
+			log.error( "Could  not find user {}", user.getUsername());
 			return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
 		}
 		Optional<Item> item = itemRepository.findById(request.getItemId());
 		if(!item.isPresent()) {
+			log.error("Could not find item {}", item);
 			return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
 		}
 		Cart cart = user.getCart();
