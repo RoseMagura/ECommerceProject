@@ -43,10 +43,13 @@ public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilte
     public Authentication attemptAuthentication(HttpServletRequest req,
                                                 HttpServletResponse res) throws AuthenticationException {
         try {
-            log.info("Attempting authentication");
+            log.info("Attempting authentication with {}", req.toString());
+            System.out.println(req.getHeaderNames());
             CreateUserRequest creds =
                     new ObjectMapper().readValue(req.getInputStream(),
                             CreateUserRequest.class);
+            System.out.println("Credentials: " + creds.getUsername());
+            System.out.println("Credentials: " + creds.getPassword());
             return authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(
                             creds.getUsername(),

@@ -13,12 +13,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.util.MultiValueMap;
+import org.springframework.web.bind.annotation.*;
 
 import com.example.demo.model.persistence.Cart;
 import com.example.demo.model.persistence.User;
@@ -63,30 +59,45 @@ public class UserController {
 	}
 
 	@PostMapping("/signup")
-	public ResponseEntity<User> createUser(@RequestBody CreateUserRequest createUserRequest) {
-		log.info("Trying to create a new user");
+//	public ResponseEntity<User> createUser(@RequestBody CreateUserRequest createUserRequest) {
+	public
+//			void
+	ResponseEntity<User>
+	createUser(@RequestParam MultiValueMap data) {
+
+		log.info("Trying to create a new user from User Controller with {}", data);
 		User user = new User();
-		user.setUsername(createUserRequest.getUsername());
-		log.debug("Username set with: {} ", createUserRequest.getUsername());
+//		log.debug("Username set with: {} ", createUserRequest.getUsername());
+		String username = (String) data.getFirst("username");
+		String password = (String) data.getFirst("password");
+		String confirmPassword = (String) data.getFirst("confirmPassword");
+		System.out.println("Username: " + username);
+		System.out.println("Password: " + password);
+		System.out.println("ConfirmPassword: " + confirmPassword);
+
+		user.setUsername(username);
 		Cart cart = new Cart();
 		cartRepository.save(cart);
 		user.setCart(cart);
-		if(createUserRequest.getPassword().length() < 7) {
+		assert password != null;
+		if(password.length() < 7) {
 			log.error("Error with user password: too short. Password must be at least 7 characters" +
-					" Cannot create user {}", createUserRequest.getUsername());
+					" Cannot create user {}", username);
 			return ResponseEntity.badRequest().build();
 		}
-		else if(!createUserRequest.getPassword().equals(createUserRequest.getConfirmPassword())){
-			log.error("Error with user password: passwords do not match. Cannot create user {}", createUserRequest.getUsername());
+		else if(!password.equals(confirmPassword)){
+			log.error("Error with user password: passwords do not match. Cannot create user {}", username);
 			return ResponseEntity.badRequest().build();
 		}
+		assert username != null;
 		user.setPassword(bCryptPasswordEncoder
-				.encode(createUserRequest.getPassword()
-						+ new StringBuffer(createUserRequest.getUsername().toLowerCase()).reverse().toString()
+				.encode(password
+						+ new StringBuffer(username.toLowerCase()).reverse().toString()
 				));
 		log.debug("Is User being created correctly? {}", user.toString());
 		userRepository.save(user);
 		return ResponseEntity.ok(user);
+//		return null;
 	}
 	
 }

@@ -18,14 +18,14 @@ public class ThymeController {
         return "login";
     }
 
-    @RequestMapping("/signup")
-    @GetMapping
+//    @RequestMapping("/signup")
+    @GetMapping("/signup")
     public String getSignup() {
 //        log.info("Trying to get the sign up template");
         return "signup";
     }
 
-    @PostMapping
+//    @PostMapping("/signup")
     public void createUser() {
         System.out.println("Thyme Controller processing user data");
     }
