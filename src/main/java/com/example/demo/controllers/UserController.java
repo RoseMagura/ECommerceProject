@@ -27,7 +27,7 @@ import com.example.demo.model.persistence.repositories.UserRepository;
 import com.example.demo.model.requests.CreateUserRequest;
 
 @RestController
-@RequestMapping("/api/user")
+//@RequestMapping("/api/user")
 public class UserController {
 	
 	@Autowired
@@ -61,9 +61,10 @@ public class UserController {
 			return ResponseEntity.ok(user);
 		}
 	}
-	
-	@PostMapping("/create")
+
+	@PostMapping("/signup")
 	public ResponseEntity<User> createUser(@RequestBody CreateUserRequest createUserRequest) {
+		log.info("Trying to create a new user");
 		User user = new User();
 		user.setUsername(createUserRequest.getUsername());
 		log.debug("Username set with: {} ", createUserRequest.getUsername());

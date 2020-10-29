@@ -43,6 +43,7 @@ public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilte
     public Authentication attemptAuthentication(HttpServletRequest req,
                                                 HttpServletResponse res) throws AuthenticationException {
         try {
+            log.info("Attempting authentication");
             CreateUserRequest creds =
                     new ObjectMapper().readValue(req.getInputStream(),
                             CreateUserRequest.class);
