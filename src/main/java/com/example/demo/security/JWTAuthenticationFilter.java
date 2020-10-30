@@ -5,8 +5,10 @@ import com.example.demo.controllers.UserController;
 import com.example.demo.model.persistence.repositories.UserRepository;
 import com.example.demo.model.requests.CreateUserRequest;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.common.io.CharStreams;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.core.util.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -20,9 +22,12 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.Scanner;
+import java.util.stream.Collectors;
 
 import static com.auth0.jwt.algorithms.Algorithm.HMAC512;
 import static com.example.demo.security.SecurityConstants.*;
@@ -42,14 +47,13 @@ public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilte
     @Override
     public Authentication attemptAuthentication(HttpServletRequest req,
                                                 HttpServletResponse res) throws AuthenticationException {
-        try {
-            log.info("Attempting authentication with {}", req.toString());
-            System.out.println(req.getHeaderNames());
-            CreateUserRequest creds =
-                    new ObjectMapper().readValue(req.getInputStream(),
-                            CreateUserRequest.class);
-            System.out.println("Credentials: " + creds.getUsername());
-            System.out.println("Credentials: " + creds.getPassword());
+//        try {
+            log.info("Attempting authentication with {}", req.getParameter("username"));
+            CreateUserRequest creds = new CreateUserRequest();
+            creds.setUsername(req.getParameter("username"));
+            creds.setPassword(req.getParameter("password"));
+//                    new ObjectMapper().readValue(req.getInputStream(),
+//                            CreateUserRequest.class);
             return authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(
                             creds.getUsername(),
@@ -57,10 +61,11 @@ public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilte
                                     + new StringBuffer(creds.getUsername().toLowerCase()).reverse().toString(),
                             new ArrayList<>())
             );
-        } catch (IOException e) {
-            log.error("Exeption: {}", e);
-            throw new RuntimeException(e);
-        }
+//        }
+//        catch (IOException e) {
+//            log.error("Exception: {}", e);
+//            throw new RuntimeException(e);
+//        }
     }
 
     @Override
